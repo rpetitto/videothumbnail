@@ -1,4 +1,4 @@
-export default async function (url) {
+window.function = export default async function (url) {
     if (!url) return undefined;
 
     const cleanUrl = url.split('?')[0].toLowerCase();
