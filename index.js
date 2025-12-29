@@ -2,7 +2,8 @@
 export default async function (url) {
     return "Test Success: " + url;
 }
-/*export default async function (url) {
+/*
+export default async function (url) {
     if (!url) return undefined;
 
     const cleanUrl = url.split('?')[0].toLowerCase();
@@ -89,3 +90,4 @@ export default async function (url) {
 
     return undefined;
 }
+*/
