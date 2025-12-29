@@ -1,10 +1,10 @@
 window.function = async function (urlArg) {
-  // 1. Unpack the Glide parameter (it comes as an object)
+  // 1. Unpack the Glide parameter
   if (!urlArg || !urlArg.value) return undefined;
   const url = urlArg.value;
   const cleanUrl = url.split('?')[0].toLowerCase();
 
-  // 2. Image Check
+  // 2. Image Check (Direct links ending in .jpg, etc.)
   const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
   if (imageExtensions.some(ext => cleanUrl.endsWith(ext))) {
     return url;
@@ -39,17 +39,26 @@ window.function = async function (urlArg) {
     } catch (error) { /* ignore */ }
   }
 
-  // 6. Hosted Video Fallback (DOM)
-  // Since this runs in a real browser context (iframe), document IS available.
+  // 6. Google Drive (Images & Videos)
+  // Detects: drive.google.com/file/d/ID/view or drive.google.com/open?id=ID
+  const driveRegex = /(?:drive\.google\.com\/(?:file\/d\/|open\?id=)|docs\.google\.com\/file\/d\/)([-\w]+)/;
+  const driveMatch = url.match(driveRegex);
+  if (driveMatch) {
+     // We use the specific thumbnail endpoint. 
+     // 'sz=w1000' requests a width of 1000px (high quality).
+     return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1000`;
+  }
+
+  // 7. Hosted Video Fallback (DOM)
+  // This handles raw .mp4/.mov files stored on AWS, Dropbox (dl=1), etc.
   return new Promise((resolve) => {
     try {
       const video = document.createElement('video');
       video.crossOrigin = "anonymous";
       video.src = url;
       video.muted = true;
-      video.preload = "metadata"; // optimization
+      video.preload = "metadata";
 
-      // Timeout to prevent hanging
       const timeout = setTimeout(() => resolve(undefined), 3000);
 
       video.onloadedmetadata = () => {
