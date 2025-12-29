@@ -1,6 +1,6 @@
 {
   "kind": "column",
-  "name": "Universal Media Thumbnail",
+  "name": "Universal Media Thumbnail, v2",
   "description": "Generates a thumbnail image from YouTube, Vimeo, Loom, or hosted video URLs.",
   "author": "Robert Petitto",
   "params": [
